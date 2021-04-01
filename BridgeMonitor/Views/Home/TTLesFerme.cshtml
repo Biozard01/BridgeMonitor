@@ -1,0 +1,79 @@
+﻿@using Microsoft.VisualBasic
+@model List<TTFermetures>
+@{
+    ViewData["Title"] = "Toutes Les Fermetures";
+    List<TTFermetures> ferme = Model;
+    ferme.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<br />
+
+<h2>Fermeture A Venir</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom Du Bateau / De L'Evenement Provoquant La Fermeture</th>
+            <th>Date Et Heure De La Prochaine Fermeture</th>
+            <th>Durée De La Prochaine Fermeture</th>
+
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var info in ferme)
+        {
+
+            <tr>
+                @if (@info.BoatName != "MAINTENANCE")
+                {
+                    <td>@info.BoatName</td>
+                    <td>@info.ClosingDate</td>
+                    <td>Diff de ClosingDate et ReopeningDate</td>
+                }
+                else
+                {
+                    <td style="color: red">@info.BoatName</td>
+                    <td style="color: red">@info.ClosingDate</td>
+                    <td style="color: red">@info.ReopeningDate</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br />
+
+<h2>Fermeture Passé</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom Du Bateau / De L'Evenement Provoquant La Fermeture</th>
+            <th>Date Et Heure De La Prochaine Fermeture</th>
+            <th>Durée De La Prochaine Fermeture</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var info in Model)
+        {
+            <tr>
+                @if (@info.BoatName != "MAINTENANCE")
+                {
+                    <td>@info.BoatName</td>
+                    <td>@info.ClosingDate</td>
+                    <td>Diff de ClosingDate et ReopeningDate</td>
+                }
+                else
+                {
+                    <td style="color: red">@info.BoatName</td>
+                    <td style="color: red">@info.ClosingDate</td>
+                    <td style="color: red">@info.ReopeningDate</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,8 +1,25 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.VisualBasic
+@model List<TTFermetures>
+@{
+    ViewData["Title"] = "Prochaine Fermeture";
+ 
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>@ViewData["Title"]</h1>
+
+<p>La date et heure de la fermeture (avec le nom du jour de la semaine)</p>
+
+<p>La date et heure de la réouverture</p>
+
+<p>Le nom du bateau ou évènement responsable de la fermeture</p>
+
+<p>La durée de la prochaine fermeture</p>
+
+<p>Un décompte en temps réel de la forme "encore 5 jours, 3 heures 2 minutes et 17 secondes avant la prochaine fermeture"</p>
+
+<p>
+    Un indicateur "Risque de bouchons" qui affichera :
+    <br />
+    - "Elevé" si la fermeture impacte la plage horaire "7h-9h" ou "17h-19h", "Faible" sinon
+</p>
+
