@@ -1,25 +1,109 @@
-﻿@using Microsoft.VisualBasic
-@model List<TTFermetures>
-@{
+﻿@{
     ViewData["Title"] = "Prochaine Fermeture";
- 
+
+    TTFermetures info = ViewData["Info"] as TTFermetures;
+
+    string GetTime(DateTime time)
+    {
+        TimeSpan timeSpan = time.Subtract(DateTime.Now);
+        return GetTimeSpan(timeSpan);
+    }
+
+    string GetTimeSpan(TimeSpan timeSpan)
+    {
+        return string.Format(
+            "{0}, {1} {2} et {3}",
+            Clean(timeSpan.Days, "jours"),
+            Clean(timeSpan.Hours, "heures"),
+            Clean(timeSpan.Minutes, "minutes"),
+            Clean(timeSpan.Seconds, "secondes")
+            );
+    }
+
+    string Clean(int amount, string mot)
+    {
+        return string.Format("{0} {1}{2}", amount, mot, "");
+    }
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    .dates {
+        font-size: 80%;
+    }
+</style>
 
-<p>La date et heure de la fermeture (avec le nom du jour de la semaine)</p>
+<script>
+    function getTimeClose() {
+        var date = new Date(toLocalDate("@info.ClosingDate"));
+        var d = getTime(date - Date.now());
+        return (d.days, "jours") + ", " + (d.hours, "heures") + " " + (d.minutes, "minutes") + " et " + (d.seconds, "secondes");
+    }
+    
+    function getTime(d) {
+        var time = d / 1000;
 
-<p>La date et heure de la réouverture</p>
+        var days = Math.floor(time / 86400);
+        time -= days * 86400;
 
-<p>Le nom du bateau ou évènement responsable de la fermeture</p>
+        var hours = Math.floor(time / 3600) % 24;
+        time -= hours * 3600;
 
-<p>La durée de la prochaine fermeture</p>
+        var minutes = Math.floor(time / 60) % 60;
+        time -= minutes * 60;
 
-<p>Un décompte en temps réel de la forme "encore 5 jours, 3 heures 2 minutes et 17 secondes avant la prochaine fermeture"</p>
+        var seconds = Math.floor(time);
 
-<p>
-    Un indicateur "Risque de bouchons" qui affichera :
-    <br />
-    - "Elevé" si la fermeture impacte la plage horaire "7h-9h" ou "17h-19h", "Faible" sinon
-</p>
+        return {
+            days: days,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds
+        };
+    }
 
+    function toLocalDate(date) {
+        var res = date.split("/");
+        return res[1] + "/" + res[0] + "/" + res[2];
+    }
+   
+</script>
+
+<h2>Prochaine fermeture</h2>
+
+<br />
+
+<h3>Fermeture le : <span class="dates">@info.ClosingDate.ToString("dddd dd MMMM yyyy à HH:mm")</span></h3>
+
+<h3>Réouverture le : <span class="dates">@info.ReopeningDate.ToString("dddd dd MMMM yyyy à HH:mm")</span></h3>
+
+<h3>
+    Prochaine Arrivée Ou Evenement : @if (@info.BoatName != "MAINTENANCE")
+                                     {
+                                         <span class="dates">@info.BoatName</span>
+                                     }
+                                     else
+                                     {
+                                         <span class="dates" style="color: red">@info.BoatName</span>
+
+                                     }
+</h3>
+
+<h3> Durée de la prochaine fermeture : <span class="dates">@GetTimeSpan(info.ReopeningDate.Subtract(info.ClosingDate))</span></h3>
+
+<br/>
+
+<h3 style="color: purple">
+    <span>
+        @if (info.ClosingDate.CompareTo(DateTime.Now) > 0)
+        {
+            @GetTime(info.ClosingDate)
+
+            <script>
+                setInterval(() => {
+                    var countDown = document.getElementById("CloseCountDown");
+                    countDown.innerText = getTimeCLose();
+                }, 1000);
+            </script>
+        }
+    </span> avant la prochaine fermeture
+</h3>

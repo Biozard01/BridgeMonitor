@@ -2,8 +2,6 @@
 @model List<TTFermetures>
 @{
     ViewData["Title"] = "Toutes Les Fermetures";
-    List<TTFermetures> ferme = Model;
-    ferme.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -23,7 +21,7 @@
     </thead>
 
     <tbody>
-        @foreach (var info in ferme)
+        @foreach (var info in Model)
         {
 
             <tr>
