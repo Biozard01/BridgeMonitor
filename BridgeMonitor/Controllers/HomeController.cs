@@ -24,14 +24,14 @@ namespace BridgeMonitor.Controllers
 
         public IActionResult Index()
         {
-            List<TTFermetures> info = GetFromAPI();
-            info.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
+            List<TTFermetures> apiInfo = GetFromAPI();
+            apiInfo.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
 
-            foreach (var ferme in info)
+            foreach (var ferme1 in apiInfo)
             {
-                if (DateTimeOffset.Compare(DateTimeOffset.Now, ferme.ClosingDate) < 0)
+                if (DateTimeOffset.Compare(DateTimeOffset.Now, ferme1.ClosingDate) < 0)
                 {
-                    ViewData["Info"] = ferme;
+                    ViewData["Info0"] = ferme1;
                     break;
                 }
             }
@@ -39,30 +39,9 @@ namespace BridgeMonitor.Controllers
             return View();
         }
 
-        public IActionResult Detail(string fermes)
-        {
-            string[] infos = fermes.Split(".");
-            List<TTFermetures> info = GetFromAPI();
-            List<TTFermetures> ancienInfo = new List<TTFermetures>();
-            for (int i = 0; i < info.Count; i++)
-            {
-                if (info[i].ClosingDate.CompareTo(DateTime.Now) < 0)
-                {
-                    ancienInfo.Add(info[i]);
-                    info.RemoveAt(i);
-                }
-            }
-            
-            info.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
-            ancienInfo.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
-
-            ViewData["Info"] = infos[0] == "n" ? info[int.Parse(infos[1])] : ancienInfo[int.Parse(infos[1])];
-            return View("Index");
-        }
-
         public IActionResult TTLesFerme()
         {
-            ViewData["Infos"] = GetFromAPI();
+            ViewData["Info1"] = GetFromAPI();
             return View();
         }
 

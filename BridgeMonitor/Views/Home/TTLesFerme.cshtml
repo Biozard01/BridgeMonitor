@@ -1,7 +1,37 @@
-﻿@using Microsoft.VisualBasic
-@model List<TTFermetures>
-@{
-    ViewData["Title"] = "Toutes Les Fermetures";
+﻿@{
+    ViewData["Title"] = "Toutes les Fermetures";
+
+    List<TTFermetures> fermetures = ViewData["Info1"] as List<TTFermetures>;
+    List<TTFermetures> fermeturesPassee = new List<TTFermetures>();
+
+    fermetures.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
+    fermeturesPassee.Sort((s1, s2) => DateTimeOffset.Compare(s1.ClosingDate, s2.ClosingDate));
+
+    for (int i = 0; i < fermetures.Count; i++)
+    {
+        if (fermetures[i].ClosingDate.CompareTo(DateTime.Now) < 0)
+        {
+            fermeturesPassee.Add(fermetures[i]);
+            fermetures.RemoveAt(i);
+        }
+    }
+
+    string GetTime(TTFermetures info)
+    {
+        TimeSpan timeSpan = info.ReopeningDate.Subtract(info.ClosingDate);
+        return string.Format(
+            "{0}, {1} {2} et {3}",
+            Clean(timeSpan.Days, "jours"),
+            Clean(timeSpan.Hours, "heures"),
+            Clean(timeSpan.Minutes, "minutes"),
+            Clean(timeSpan.Seconds, "secondes")
+            );
+    }
+
+    string Clean(int amount, string mot)
+    {
+        return string.Format("{0} {1}{2}", amount, mot, "");
+    }
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -10,68 +40,52 @@
 
 <h2>Fermeture A Venir</h2>
 
-<table class="table">
+<table>
     <thead>
-        <tr>
-            <th>Nom Du Bateau / De L'Evenement Provoquant La Fermeture</th>
-            <th>Date Et Heure De La Prochaine Fermeture</th>
-            <th>Durée De La Prochaine Fermeture</th>
+    <tr>
+        <th>Nom Du Bateau / De L'Evenement Provoquant La Fermeture</th>
+        <th>Date Et Heure De La Prochaine Fermeture</th>
+        <th>Durée De La Prochaine Fermeture</th>
 
-        </tr>
+    </tr>
     </thead>
 
     <tbody>
-        @foreach (var info in Model)
-        {
-
-            <tr>
-                @if (@info.BoatName != "MAINTENANCE")
-                {
-                    <td>@info.BoatName</td>
-                    <td>@info.ClosingDate</td>
-                    <td>Diff de ClosingDate et ReopeningDate</td>
-                }
-                else
-                {
-                    <td style="color: red">@info.BoatName</td>
-                    <td style="color: red">@info.ClosingDate</td>
-                    <td style="color: red">@info.ReopeningDate</td>
-                }
-            </tr>
-        }
+    @for (int i = 0; i < fermetures.Count; i++)
+    {
+        <tr>
+            <td>@fermetures[i].BoatName</td>
+            <td>@fermetures[i].ClosingDate.ToString("dddd dd MMMM yyyy à HH:mm")</td>
+            <td>@GetTime(fermetures[i])</td>
+            <td><button onclick="window.location.href='/Home';" title="Plus de détails.">Voir Le Détails</button></td>
+        </tr>
+    }
     </tbody>
+    
 </table>
 
 <br />
 
 <h2>Fermeture Passé</h2>
 
-<table class="table">
+<table>
     <thead>
         <tr>
-            <th>Nom Du Bateau / De L'Evenement Provoquant La Fermeture</th>
-            <th>Date Et Heure De La Prochaine Fermeture</th>
-            <th>Durée De La Prochaine Fermeture</th>
+            <th>Nom Du Bateau / De L'Evenement Ayant Provoquant La Fermeture</th>
+            <th>Date Et Heure De La Fermeture</th>
+            <th>Durée De La Fermeture</th>
         </tr>
     </thead>
 
     <tbody>
-        @foreach (var info in Model)
-        {
-            <tr>
-                @if (@info.BoatName != "MAINTENANCE")
-                {
-                    <td>@info.BoatName</td>
-                    <td>@info.ClosingDate</td>
-                    <td>Diff de ClosingDate et ReopeningDate</td>
-                }
-                else
-                {
-                    <td style="color: red">@info.BoatName</td>
-                    <td style="color: red">@info.ClosingDate</td>
-                    <td style="color: red">@info.ReopeningDate</td>
-                }
-            </tr>
-        }
+    @for (int i = 0; i < fermeturesPassee.Count; i++)
+    {
+        <tr>
+            <td>@fermeturesPassee[i].BoatName</td>
+            <td>@fermeturesPassee[i].ClosingDate.ToString("dddd dd MMMM yyyy à HH:mm")</td>
+            <td>@GetTime(fermeturesPassee[i])</td>
+            <td><button onclick="window.location.href='/Home';" title="Plus de détails.">Voir Le Détails</button></td>
+        </tr>
+    }
     </tbody>
 </table>
